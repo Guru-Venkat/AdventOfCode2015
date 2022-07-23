@@ -1,3 +1,6 @@
+import enum
+
+
 class Day1:
     """
     --- Day 1: Not Quite Lisp --- Santa was hoping for a white Christmas, but his weather machine's "snow" function
@@ -32,7 +35,7 @@ class Day1:
 
     For example:
 
-    ) causes him to enter the basement at character position 1.
+    ')' causes him to enter the basement at character position 1.
     ()()) causes him to enter the basement at character position 5.
     What is the position of the character that causes Santa to first enter the basement?
 
@@ -140,5 +143,79 @@ class Day2:
         return sum(self.bowLengthRequired(box) for box in self.data)
 
 
+class Day3:
+    """
+    --- Day 3: Perfectly Spherical Houses in a Vacuum ---
+
+    Santa is delivering presents to an infinite two-dimensional grid of houses.
+
+    He begins by delivering a present to the house at his starting location, and then an elf at the North Pole calls
+    him via radio and tells him where to move next. Moves are always exactly one house to the north (^), south (v),
+    east (>), or west (<). After each move, he delivers another present to the house at his new location.
+
+    However, the elf back at the North Pole has had a little too much eggnog, and so his directions are a little off,
+    and Santa ends up visiting some houses more than once. How many houses receive at least one present?
+
+    For example:
+
+    > delivers presents to 2 houses: one at the starting location, and one to the east.
+    ^>v< delivers presents to 4 houses in a square, including twice to the house at his starting/ending location.
+    ^v^v^v^v^v delivers a bunch of presents to some very lucky children at only 2 houses.
+    """
+
+    class DirectionMap:
+        class Directions(enum.Enum):
+            NORTH = "^"
+            SOUTH = "V"
+            EAST = ">"
+            WEST = "<"
+
+        def __init__(self, count_of_movers=1):
+            self.visited = set()
+            self.count_of_movers = count_of_movers
+            self.currentLocation = [0 + 0j for _ in range(self.count_of_movers)]
+            self.visited.add(self.currentLocation[0])
+
+        @property
+        def visitedCount(self):
+            return len(self.visited)
+
+        def processDirections(self, inputDirections: list[Directions]):
+
+            for i, direction in enumerate(inputDirections):
+                self._processDirection(direction, i % self.count_of_movers)
+
+            return self
+
+        def _processDirection(self, direction: Directions, mover_index: int = 1):
+            match direction:
+                case self.Directions.NORTH:
+                    self.currentLocation[mover_index] = self.currentLocation[mover_index] + 0 + 1j
+                case self.Directions.SOUTH:
+                    self.currentLocation[mover_index] = self.currentLocation[mover_index] + 0 - 1j
+                case self.Directions.EAST:
+                    self.currentLocation[mover_index] = self.currentLocation[mover_index] + 1 + 0j
+                case self.Directions.WEST:
+                    self.currentLocation[mover_index] = self.currentLocation[mover_index] - 1 + 0j
+
+            self.visited.add(self.currentLocation[mover_index])
+
+    def __init__(self, data=""):
+        if data == "":
+            with open("Data/Day3Data.txt", "r") as f:
+                self.data = f.read()
+        else:
+            self.data = data
+
+        self.data = [Day3.DirectionMap.Directions.__dict__['_value2member_map_'][a] for a in self.data.upper()]
+
+    def part1(self):
+        return Day3.DirectionMap().processDirections(
+            self.data).visitedCount
+
+    def part2(self):
+        return Day3.DirectionMap(2).processDirections(self.data).visitedCount
+
+
 if __name__ == '__main__':
-    print(Day2().part2())
+    print(Day3().part2())

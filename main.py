@@ -74,13 +74,38 @@ class Day2:
     feet of wrapping paper plus 1 square foot of slack, for a total of 43 square feet.
     """
 
+    class Box:
+        def __init__(self, dimensions: list[int]):
+            if len(dimensions) != 3:
+                raise Exception("Invalid number of dimensions")
+            self.length = dimensions[0]
+            self.width = dimensions[1]
+            self.height = dimensions[2]
+
+        @property
+        def area(self):
+            return 2 * sum(self.areaOfSides)
+
+        @property
+        def areaOfSides(self) -> list:
+            return [self.length * self.width, self.width * self.height, self.height * self.length]
+
     def __init__(self, data=""):
         if data == "":
-            with open("Data/Day1Data.txt", "r") as f:
+            with open("Data/Day2Data.txt", "r") as f:
                 self.data = f.read()
         else:
             self.data = data
 
+        self.data = [Day2.Box(list(int(x) for x in row.strip().split("x"))) for row in self.data.splitlines()]
+
+    @staticmethod
+    def paperRequired(box: Box):
+        return box.area + min(box.areaOfSides)
+
+    def part1(self):
+        return sum(self.paperRequired(box) for box in self.data)
+
 
 if __name__ == '__main__':
-    print(Day1().part2())
+    print(Day2().part1())

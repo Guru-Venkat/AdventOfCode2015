@@ -1,5 +1,8 @@
 from unittest import TestCase
-from main import Day1, Day2, Day3
+
+from parameterized import parameterized
+
+from main import Day1, Day2, Day3, Day4, Day5
 
 
 class TestDay1(TestCase):
@@ -102,3 +105,32 @@ class TestDay3(TestCase):
         self.assertEqual(self.day3_4.part2(), 3)
         self.assertEqual(self.day3_2.part2(), 3)
         self.assertEqual(self.day3_3.part2(), 11)
+
+
+class TestDay4(TestCase):
+    def test_part1(self):
+        self.assertEqual(Day4("abcdef").part1(), 609043)
+
+
+class TestDay5(TestCase):
+
+    @parameterized.expand([
+        'aei',
+        'xazegov',
+        'aeiouaeiouaeiou',
+        'xx',
+        'abcdde',
+        'aabbccdd',
+        'jchzalrnumimnmhp',
+        'haegwjzuvuyypxyu',
+        'dvszwmarrgswjxmb '
+    ])
+    def test_is_naughty_string(self, a):
+        self.assertFalse(Day5.isNiceString(a))
+
+    @parameterized.expand([
+        'ugknbfddgicrmopn',
+        'aaa'
+    ])
+    def test_is_nice_string(self, a):
+        self.assertTrue(Day5.isNiceString(a))
